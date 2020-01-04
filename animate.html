@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>示例</title>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel='stylesheet' href='mapbox-gl.css' />
+    <style>
+        html,
+        body,
+        #map {
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='map'></div>
+
+    <script src='mapbox-gl-dev.js'></script>
+    <script src='MAP_STYLE.dark.js'></script>
+    <script src='threebox.js'></script>
+    <script>
+
+
+
+        var map = window.map = new mapboxgl.Map({
+            container: 'map',
+            zoom: 10,
+            center: [120.57022, 32.3858585],
+            style: style,
+            hash: true
+        });
+
+        var origin = [120.57022, 32.3858585, 0];
+
+        map.on('load', function () {
+        
+
+            map.addLayer({
+                id: 'custom_layer',
+                type: 'custom',
+                onAdd: function (map, mbxContext) {
+                    onAdd(map, mbxContext)
+                },
+
+                render: function (gl, matrix) {
+                    threebox.update();
+                }
+            },'3d-buildings');//添加到建筑物图层之后
+        });
+
+        function onAdd(map, mbxContext) {
+            window.threebox = new Threebox(map, mbxContext);//初始化
+            threebox.setupDefaultLights();//设置系统光
+
+            var radius = 0.4;
+            var sphereGeom = new THREE.SphereGeometry(radius, 40, 40, 0, Math.PI, 0, Math.PI);
+            var redMaterial = new THREE.MeshLambertMaterial({
+                color: 0xff0000,
+                transparent: true,
+                opacity: 0.5,
+                side: THREE.DoubleSide
+            });
+            var GradualGeometry = new THREE.SphereGeometry(radius, 100, 100, 0, Math.PI, 0, Math.PI);
+            var GradualMaterial = new THREE.MeshBasicMaterial({
+                color: 0xffffff,
+                vertexColors: THREE.VertexColors,
+                transparent: true,
+                opacity: 0.5,
+                side: THREE.DoubleSide
+            });
+            cube = new THREE.Mesh(GradualGeometry, GradualMaterial);
+            cube.position.set(0, 0, 4);
+            cube.scale.multiplyScalar(1.07);
+            cube1 = new THREE.Mesh(sphereGeom, redMaterial);
+            cube1.position.set(0, 0, 4);
+            threebox.addAtCoordinate(cube1.clone(), origin);
+            threebox.addAtCoordinate(cube.clone(), origin);//添加对象
+            var startTime = Date.now();
+
+            function animate() {
+                var currentTime = Date.now();
+                var time = (currentTime - startTime) / 1000;
+                var faceIndices = ['a', 'b', 'c', 'd'];//创建数组
+                for (var i = 0; i < cube.geometry.faces.length; i++) //遍历面的数量
+                {
+                    face = cube.geometry.faces[i];//获取几何体的面
+                    //确定是三重面还是四重面
+                    numberOfSides = (face instanceof THREE.Face3) ? 3 : 4;
+                    // 为每个面指定颜色
+                    for (var j = 0; j < numberOfSides; j++) {
+                        vertexIndex = face[faceIndices[j]];
+                        // 存储顶点坐标
+                        point = cube.geometry.vertices[vertexIndex];
+                        // 初始化颜色变量
+                        color = new THREE.Color(0xff0000);
+                        var g = Math.cos((point.z / (radius / Math.PI)) + time);//循环函数
+                        color.setRGB(1, g, point.z / (radius * 10 / Math.PI));//设置颜色
+                        face.vertexColors[j] = color;//颜色赋值
+                    }
+                }
+                cube.geometry.elementsNeedUpdate = true;
+                requestAnimationFrame(animate);
+            }
+            animate()
+           
+        }
+
+    </script>
+</body>
+
+</html>
