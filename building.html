@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>示例</title>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel='stylesheet' href='mapbox-gl.css' />
+    <style>
+        html,
+        body,
+        #map {
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='map'></div>
+
+    <script src='mapbox-gl-dev.js'></script>
+    <script src='MAP_STYLE.dark.js'></script>
+    <script src='threebox.js'></script>
+    <script src='building.js'></script>
+    <script src='data.js'></script>
+    <script>
+
+
+
+        var map = window.map = new mapboxgl.Map({
+            container: 'map',
+            zoom: 10,
+            center: [120.57022, 32.3858585],
+            style: style,
+            hash: true
+        });
+
+        map.on('style.load', function () {
+            var building = new Building(map);
+            building.add(data);
+        })
+
+
+
+
+    </script>
+</body>
+
+</html>
