@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>示例</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <link rel="stylesheet" href="mapbox-gl.css" />
+    <style>
+      html,
+      body,
+      #map {
+        margin: 0;
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+
+    <script src="mapbox-gl-dev.js"></script>
+    <script src="MAP_STYLE.darkblue.js"></script>
+    <script src="threebox.js"></script>
+    <script>
+      var map = (window.map = new mapboxgl.Map({
+        container: "map",
+        zoom: 10,
+        center: [120.57022, 32.3858585],
+        style: style,
+        hash: true,
+      }));
+
+      var origin = [120.57022, 32.3858585, 0];
+
+      var uniforms = {
+        dtPyramidTexture: {
+          value: new THREE.TextureLoader().load("wall1.png"),
+        },
+        time: {
+          value: 0.0,
+        },
+        uColor: {
+          value: new THREE.Color("#5588aa"),
+        },
+      };
+
+      map.on("style.load", function () {
+        map.addLayer(
+          {
+            id: "custom_layer",
+            type: "custom",
+            renderingMode: "3d",
+            onAdd: function (map, mbxContext) {
+              window.tb = new Threebox(map, mbxContext, {
+                defaultLights: true,
+              });
+
+              function getShaderStr(params) {
+                let shader = { vs: "", fs: "" };
+
+                shader.vs =
+                  "varying vec2 vUv;\n" +
+                  "void main(){\n" +
+                  "vUv = uv;\n" +
+                  "gl_Position = projectionMatrix*viewMatrix*modelMatrix*vec4( position, 1.0 );\n" +
+                  "}\n";
+
+                shader.fs =
+                  "uniform float time;\n" +
+                  "varying vec2 vUv;\n" +
+                  "uniform sampler2D dtPyramidTexture;\n" +
+                  "uniform vec3 uColor;\n" +
+                  "void main() {\n" +
+                  " vec2 st = vUv;\n" +
+                  " vec4 colorImage = texture2D(dtPyramidTexture, vec2(vUv.x,fract(vUv.y-time)));\n" +
+                  //'float alpha=mix(0.1,1.0,clamp((1.0-vUv.y) * uColor.a,0.0,1.0)) +(1.0-sign(vUv.y-time*0.001))*0.2*(1.0-colorImage.r);\n'+
+                  "vec3 diffuse =(1.0-colorImage.a)*vec3(0.8,1.0,0.0)+colorImage.rgb*vec3(0.8,1.0,0);\n" +
+                  "gl_FragColor = vec4(diffuse,0.7);\n" +
+                  "}\n";
+                return shader;
+              }
+
+              function getMaterial() {
+                let shader = getShaderStr();
+                let material = new THREE.ShaderMaterial({
+                  uniforms: uniforms,
+                  vertexShader: shader.vs,
+                  fragmentShader: shader.fs,
+                  side: THREE.DoubleSide,
+                  transparent: true,
+                  depthWrite: false,
+                });
+                return material;
+              }
+              function getGeometry(geometryScale) {
+                let geometry = new THREE.CylinderBufferGeometry(
+                  0,
+                  6.4,
+                  11,
+                  4,
+                  1,
+                  false,
+                  0,
+                  6.3
+                );
+                geometry.scale(1, 1, 1);
+                geometry.computeBoundingSphere();
+                return geometry;
+              }
+
+              const vertices = new Float32Array([
+                -1.0,
+                -1.0,
+                1.0,
+                1.0,
+                -1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                -1.0,
+                -1.0,
+                1.0,
+              ]);
+
+              const geometry = getGeometry(
+                [
+                  { x: -1.0, y: -1.0 },
+                  { x: 1.0, y: -1.0 },
+                  { x: 1.0, y: 1.0 },
+                  { x: 1.0, y: 1.0 },
+                  { x: -1.0, y: -1.0 },
+                ],
+                0.5
+              );
+              const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+              const mesh = new THREE.Mesh(getGeometry(), getMaterial());
+              mesh.rotation.x = -Math.PI / 2;
+              spotLight3ds = tb
+                .Object3D({ obj: mesh, adjustment: { x: 0, y: 0, z: 0.5 } })
+                .setCoords(origin);
+              tb.add(spotLight3ds);
+              var animate = function () {
+                mesh.material.uniforms.time.value += 0.1;
+                mesh.rotation.y+=0.1;
+              
+
+                requestAnimationFrame(animate);
+                map.triggerRepaint();
+                //threebox.update();
+              };
+
+              animate();
+            },
+
+            render: function (gl, matrix) {
+              tb.update();
+            },
+          },
+          "兴趣点-level-towm"
+        );
+      });
+    </script>
+  </body>
+</html>

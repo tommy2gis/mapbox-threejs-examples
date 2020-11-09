@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>示例</title>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel='stylesheet' href='mapbox-gl.css' />
+    <style>
+        html,
+        body,
+        #map {
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='map'></div>
+
+    <script src='mapbox-gl-dev.js'></script>
+    <script src='MAP_STYLE.dark.js'></script>
+    <script src='threebox.js'></script>
+    <script>
+
+
+
+        var map = window.map = new mapboxgl.Map({
+            container: 'map',
+            zoom: 16,
+            center: [120.57022, 32.3858585],
+            style: style,
+            hash: true
+        });
+
+        var origin = [120.57022, 32.3858585,0];
+ 
+        const vertexShader = `
+varying vec3 vNormal; void main() { vNormal = normalize( normalMatrix * normal ); gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 ); }
+`;
+const fragmentShader = `
+uniform vec3 glowColor;
+varying vec3 vNormal; void main() { float intensity = pow( 0.4 - dot( vNormal, vec3( 0.0, 0.0, 0.5 ) ), 4.0 ); gl_FragColor = vec4( glowColor, 1.0 ) * intensity; }
+`;
+
+function getCylinderMaterial(color) {
+    return new THREE.ShaderMaterial({
+        uniforms: {
+            glowColor: { type: "c", value: new THREE.Color(color) }
+        },
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader,
+        side: THREE.BackSide,
+        blending: THREE.AdditiveBlending,
+        transparent: true
+    });
+}
+
+
+map.on('style.load', function() {
+
+    map.addLayer({
+        id: 'custom_layer',
+        type: 'custom',
+        renderingMode: '3d',
+        onAdd: function(map, mbxContext){
+
+            window.tb = new Threebox(
+                map, 
+                mbxContext,
+                {defaultLights: true}
+            );
+            var geometry = new THREE.CylinderBufferGeometry( 0.12, 0.12, 40, 32 );
+            var material = getCylinderMaterial('#eee');
+           // var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+            var cylinder = new THREE.Mesh( geometry, material );
+            cylinder.up = new THREE.Vector3(0, 1, 0);
+            cylinder.rotation.x=Math.PI/2
+            spotLight3d = tb.Object3D({ obj: cylinder.clone(), adjustment: { x: 0, y: 0, z: 0.5 }})
+                .setCoords(origin)
+                tb.add(spotLight3d)
+
+                var geometrys = new THREE.CylinderBufferGeometry( 0.2,0.2, 5, 32 );
+            var materials = getCylinderMaterial(0xffff00);
+           // var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+            var cylinders = new THREE.Mesh( geometrys, materials );
+            cylinders.up = new THREE.Vector3(0, 1, 0);
+            cylinders.rotation.x=Math.PI/2;
+           // cylinders.position.y =10;
+
+            spotLight3ds = tb.Object3D({ obj: cylinders, adjustment: { x: 0, y: 0, z: 0.5 }})
+                .setCoords(origin)
+                tb.add(spotLight3ds)
+
+         
+            const animate = function () {
+                requestAnimationFrame( animate );
+               // cylinders.rotation.x +=0.2;
+				cylinders.position.z += 0.5;
+                if(cylinders.position.z>50){
+                    cylinders.position.z=10
+                }
+                map.triggerRepaint();
+               // tb.renderer.render( tb.scene, tb.camera );
+			};
+
+			animate();
+        },
+        
+        render: function(gl, matrix){
+            tb.update();
+        }
+    },'建筑物');
+});
+
+    </script>
+</body>
+
+</html>

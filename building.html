@@ -20,10 +20,13 @@
     <div id='map'></div>
 
     <script src='mapbox-gl-dev.js'></script>
-    <script src='MAP_STYLE.dark.js'></script>
+    <script src='MAP_STYLE.darkblue.js'></script>
     <script src='threebox.js'></script>
     <script src='building.js'></script>
-    <script src='data.js'></script>
+    <script src='floor.js'></script>
+    <script src='buildingdata.js'></script>
+    <script src='floordata.js'></script>
+    <script type="text/javascript" src="http://njypt.njghzy.com.cn:8090/geomap-api/demoCenter/mapboxDemo/lib/GeoGlobeAPI_53/js/turf.min.js"></script>
     <script>
 
 
@@ -31,14 +34,18 @@
         var map = window.map = new mapboxgl.Map({
             container: 'map',
             zoom: 10,
+          //  crs:'EPSG:4490',
             center: [120.57022, 32.3858585],
             style: style,
             hash: true
         });
 
         map.on('style.load', function () {
-            var building = new Building(map);
-            building.add(data);
+            // var floor = new Floor(map);
+            // floor.add(floordata);
+            // var building = new Building(map);
+            // building.add(data);
+           
         })
 
 

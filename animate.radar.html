@@ -28,6 +28,7 @@
 
         var map = window.map = new mapboxgl.Map({
             container: 'map',
+           // crs:'EPSG:4490',
             zoom: 10,
             center: [120.57022, 32.3858585],
             style: style,
@@ -49,7 +50,7 @@
                 render: function (gl, matrix) {
                     threebox.update();
                 }
-            }, '3d-buildings');//添加到建筑物图层之后
+            }, '建筑物');//添加到建筑物图层之后
         });
 
         var CFG = {
@@ -123,14 +124,17 @@
         }
 
         function onAdd(map, mbxContext) {
-            window.threebox = new Threebox(map, mbxContext);//初始化
-            threebox.setupDefaultLights();//设置系统光
+            window.threebox = new Threebox(map, mbxContext, {defaultLights: true});//初始化
             var ringeGeom = getRingeGeometry();
             var redMaterial = getRingMaterial();
 
             cube = new THREE.Mesh(ringeGeom, redMaterial);
             cube.position.set(0, 0, 4);
-            threebox.addAtCoordinate(cube.clone(), origin);//添加对象
+            cube3d = threebox.Object3D({ obj: cube, adjustment: { x: 0, y: 0, z: 0.5 }})
+                .setCoords(origin)
+
+            threebox.add(cube3d)
+           // threebox.addAtCoordinate(cube.clone(), origin);//添加对象
 
             init();
         }

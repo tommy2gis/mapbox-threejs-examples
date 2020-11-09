@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>示例</title>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel='stylesheet' href='mapbox-gl.css' />
+    <style>
+        html,
+        body,
+        #map {
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='map'></div>
+    
+
+    <script src='mapbox-gl-dev.js'></script>
+    <script src='MAP_STYLE.darkblue.js'></script>
+    <script src='threebox.js'></script>
+    <script>
+
+
+
+  
+
+        var map = window.map = new mapboxgl.Map({
+            container: 'map',
+            //crs:'EPSG:4490',
+            zoom: 10,
+            center: [120.57022, 32.3858585],
+            style: style,
+            hash: true
+        });
+
+        var origin = [120.57022, 32.3858585, 0];
+
+        map.on('load', function () {
+
+
+            map.addLayer({
+                id: 'custom_layer',
+                type: 'custom',
+                onAdd: function (map, mbxContext) {
+                    onAdd(map, mbxContext)
+                },
+
+                render: function (gl, matrix) {
+                    tb.update();
+                }
+            }, '建筑物');//添加到建筑物图层之后
+        });
+
+      
+
+
+        function onAdd(map, mbxContext) {
+            window.tb = new Threebox(map, mbxContext, {defaultLights: true});//初始化
+           
+
+
+            const size = 0.1;
+            const cubeGeometry = new THREE.CubeGeometry(size, size, size);
+            const cubeMaterial = new THREE.MeshLambertMaterial({
+                color: 'yellow'
+            });
+            const cube2 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+
+
+
+            function getMaterial(type = 0) {
+            var ringShield = {
+                uniforms: {
+                    color: {
+                        type: "c",
+                        value: new THREE.Color("#9999FF")
+                    },
+                    time: {
+                        type: "f",
+                        value: 1.5
+                    },
+                    type: {
+                        type: "f",
+                        value: type || 0
+                    },
+                    num: {
+                        type: "f",
+                        value: 4
+                    }
+                },
+                vertexShaderSource: `
+                    varying vec2 vUv;
+                    void main(){
+                            vUv = uv;
+                            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }`,
+                fragmentShaderSource: `
+                    uniform float time;
+                    uniform vec3 color;
+                    uniform float type;
+                    uniform float num;
+                    varying vec2 vUv;
+                    void main(){
+                        float alpha = 1.0;
+                        float dis = distance(vUv,vec2(0.5));//0-0.5
+                        if(dis > 0.5){
+                            discard;
+                        }
+                        if(type ==0.0){
+                                float y = (sin(6.0 * num *(dis-time)) + 1.0)/2.0;
+                            alpha = smoothstep(1.0,0.0,abs(y-0.5)/0.5) * (0.5 -dis) * 2.;
+                        }else if(type ==1.0){
+                                float step = fract(time* 4.)* 0.5;
+                            if(dis<step){
+                                    // alpha = smoothstep(1.0,0.0,abs(step-dis)/0.15);
+                                alpha =1.- abs(step-dis)/0.15;
+                            }else{
+                                    alpha = smoothstep(1.0,0.0,abs(step-dis)/0.05);
+                            }
+                            alpha *= (pow((0.5 -dis)* 3.0,2.0));
+                        }
+                        gl_FragColor = vec4(color,alpha );
+                    }`
+            };
+            let material = new THREE.ShaderMaterial({
+                uniforms: ringShield.uniforms,
+                defaultAttributeValues: {},
+                vertexShader: ringShield.vertexShaderSource,
+                fragmentShader: ringShield.fragmentShaderSource,
+                blending: THREE.AdditiveBlending,
+                depthWrite: !1,
+                depthTest: !0,
+                side: THREE.DoubleSide,
+                transparent: !0,
+                fog: !0
+            });
+            return material;
+        }
+            // cube23d = threebox.Object3D({ obj: cube2, adjustment: { x: 0, y: 0, z: 0.5 }})
+            //     .setCoords(origin)
+
+            // threebox.add(cube23d)
+            //const r = layer.distanceToVector3(100, 100).x;
+            var material = getMaterial(0);
+            const geometry = new THREE.RingBufferGeometry(0.001, 10, 20, 5, 0, Math.PI * 2);
+            const mesh = new THREE.Mesh(geometry, material);
+
+            mesh3d = tb.Object3D({ obj: mesh, adjustment: { x: 0, y: 0, z: 0.5 }})
+                .setCoords(origin)
+
+            tb.add(mesh3d)
+
+
+             var animate = function () {
+                mesh.material.uniforms.time.value += 0.002;
+               requestAnimationFrame(animate)
+               map.triggerRepaint();
+               //threebox.update();
+            };
+            
+			animate();
+
+       
+        }
+
+       
+
+    </script>
+</body>
+
+</html>

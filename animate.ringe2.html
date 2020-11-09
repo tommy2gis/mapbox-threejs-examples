@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>示例</title>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel='stylesheet' href='mapbox-gl.css' />
+    <style>
+        html,
+        body,
+        #map {
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='map'></div>
+
+    <script src='mapbox-gl-dev.js'></script>
+    <script src='MAP_STYLE.dark.js'></script>
+    <script src='threebox.js'></script>
+    <script>
+
+
+
+        var map = window.map = new mapboxgl.Map({
+            container: 'map',
+            //crs:'EPSG:4490',
+            zoom: 10,
+            center: [120.57022, 32.3858585],
+            style: style,
+            hash: true
+        });
+
+        var origin = [120.57022, 32.3858585, 0];
+
+        map.on('load', function () {
+
+
+            map.addLayer({
+                id: 'custom_layer',
+                type: 'custom',
+                onAdd: function (map, mbxContext) {
+                    onAdd(map, mbxContext)
+                },
+
+                render: function (gl, matrix) {
+                    tb.update();
+                }
+            }, '建筑物');//添加到建筑物图层之后
+        });
+
+        function getRingeGeometry(radius = 6, width = 0.1) {
+            return new THREE.RingBufferGeometry(radius, radius + width, 100);
+        }
+
+        //material
+        function getRingMaterial(color = '#e80d1a') {
+            const SIZE = 1024;
+            const canvas = document.createElement('canvas');
+            canvas.width = canvas.height = SIZE;
+            let ctx = canvas.getContext('2d');
+            var gradient = ctx.createLinearGradient(0, 0, SIZE, 0);
+            gradient.addColorStop("0.0", "#1a9bfc");
+            gradient.addColorStop("1.0", color);
+
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = 80;
+            ctx.arc(SIZE / 2, SIZE / 2, SIZE / 2, 0, Math.PI * 2);
+            ctx.stroke();
+            let texture = new THREE.Texture(canvas);
+            texture.needsUpdate = true; //使用贴图时进行更新
+            const material = new THREE.MeshPhongMaterial({
+                map: texture,
+                side: THREE.DoubleSide,
+                transparent: true
+            });
+            return material;
+
+        }
+
+        function onAdd(map, mbxContext) {
+            window.tb = new Threebox(map, mbxContext, {defaultLights: true});//初始化
+            var ringeGeom = getRingeGeometry();
+            var redMaterial = getRingMaterial();
+
+            cube = new THREE.Mesh(ringeGeom, redMaterial);
+            cube.position.set(0, 0, 4);
+
+            cube3d = tb.Object3D({ obj: cube, adjustment: { x: 0, y: 0, z: 0.5 }})
+                .setCoords(origin)
+
+            tb.add(cube3d)
+        }
+
+    </script>
+</body>
+
+</html>

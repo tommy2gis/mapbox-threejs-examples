@@ -1,0 +1,642 @@
+{
+  "泵站": {
+    "width": 28,
+    "height": 28,
+    "x": 84,
+    "y": 29,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "变电所": {
+    "width": 28,
+    "height": 28,
+    "x": 0,
+    "y": 59,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "殡仪馆": {
+    "width": 28,
+    "height": 28,
+    "x": 28,
+    "y": 59,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "饼屋糕点": {
+    "width": 28,
+    "height": 28,
+    "x": 56,
+    "y": 59,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "博物馆": {
+    "width": 28,
+    "height": 28,
+    "x": 84,
+    "y": 59,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "厕所": {
+    "width": 28,
+    "height": 28,
+    "x": 112,
+    "y": 0,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "超市": {
+    "width": 28,
+    "height": 28,
+    "x": 112,
+    "y": 28,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "出入口": {
+    "width": 28,
+    "height": 28,
+    "x": 112,
+    "y": 56,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "传媒": {
+    "width": 28,
+    "height": 28,
+    "x": 0,
+    "y": 87,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "大学": {
+    "width": 28,
+    "height": 28,
+    "x": 28,
+    "y": 87,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "度假村": {
+    "width": 28,
+    "height": 28,
+    "x": 56,
+    "y": 87,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "渡口": {
+    "width": 28,
+    "height": 28,
+    "x": 84,
+    "y": 87,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "飞机场": {
+    "width": 28,
+    "height": 28,
+    "x": 112,
+    "y": 87,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "风景名胜区": {
+    "width": 28,
+    "height": 28,
+    "x": 140,
+    "y": 0,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "服务区": {
+    "width": 28,
+    "height": 28,
+    "x": 140,
+    "y": 28,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "福利院": {
+    "width": 28,
+    "height": 28,
+    "x": 140,
+    "y": 56,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "工商银行": {
+    "width": 28,
+    "height": 29,
+    "x": 28,
+    "y": 0,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "公检法机构": {
+    "width": 28,
+    "height": 29,
+    "x": 56,
+    "y": 0,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "公园": {
+    "width": 28,
+    "height": 28,
+    "x": 140,
+    "y": 84,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "购物中心": {
+    "width": 28,
+    "height": 28,
+    "x": 0,
+    "y": 115,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "行政街道": {
+    "width": 28,
+    "height": 28,
+    "x": 28,
+    "y": 115,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "行政组织": {
+    "width": 28,
+    "height": 28,
+    "x": 56,
+    "y": 115,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "红十字": {
+    "width": 28,
+    "height": 28,
+    "x": 84,
+    "y": 115,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "火车站": {
+    "width": 28,
+    "height": 28,
+    "x": 112,
+    "y": 115,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "加油站": {
+    "width": 28,
+    "height": 28,
+    "x": 140,
+    "y": 115,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "家政": {
+    "width": 28,
+    "height": 28,
+    "x": 168,
+    "y": 0,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "建设银行": {
+    "width": 28,
+    "height": 28,
+    "x": 168,
+    "y": 28,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "江苏银行": {
+    "width": 28,
+    "height": 28,
+    "x": 168,
+    "y": 56,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "交通银行": {
+    "width": 28,
+    "height": 28,
+    "x": 168,
+    "y": 84,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "金融": {
+    "width": 28,
+    "height": 28,
+    "x": 168,
+    "y": 112,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "酒店": {
+    "width": 28,
+    "height": 28,
+    "x": 0,
+    "y": 143,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "居民点": {
+    "width": 28,
+    "height": 28,
+    "x": 28,
+    "y": 143,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "陵园": {
+    "width": 28,
+    "height": 28,
+    "x": 56,
+    "y": 143,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "码头": {
+    "width": 28,
+    "height": 28,
+    "x": 84,
+    "y": 143,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "美食": {
+    "width": 28,
+    "height": 30,
+    "x": 0,
+    "y": 0,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "民生银行": {
+    "width": 28,
+    "height": 28,
+    "x": 112,
+    "y": 143,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "墓地": {
+    "width": 28,
+    "height": 28,
+    "x": 140,
+    "y": 143,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "农村信用合作社": {
+    "width": 28,
+    "height": 28,
+    "x": 168,
+    "y": 143,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "农业银行": {
+    "width": 28,
+    "height": 28,
+    "x": 196,
+    "y": 0,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "派出所": {
+    "width": 28,
+    "height": 28,
+    "x": 196,
+    "y": 28,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "培训": {
+    "width": 28,
+    "height": 28,
+    "x": 196,
+    "y": 56,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "企业": {
+    "width": 28,
+    "height": 28,
+    "x": 196,
+    "y": 84,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "汽车站": {
+    "width": 28,
+    "height": 28,
+    "x": 196,
+    "y": 112,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "人民银行": {
+    "width": 28,
+    "height": 28,
+    "x": 196,
+    "y": 140,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "人物纪念地": {
+    "width": 28,
+    "height": 29,
+    "x": 0,
+    "y": 30,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "如皋农村商业银行": {
+    "width": 28,
+    "height": 28,
+    "x": 0,
+    "y": 171,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "生态园": {
+    "width": 28,
+    "height": 28,
+    "x": 28,
+    "y": 171,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "收费站": {
+    "width": 28,
+    "height": 28,
+    "x": 56,
+    "y": 171,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "售票处": {
+    "width": 28,
+    "height": 28,
+    "x": 84,
+    "y": 171,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "兽医": {
+    "width": 28,
+    "height": 28,
+    "x": 112,
+    "y": 171,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "寺庙": {
+    "width": 28,
+    "height": 28,
+    "x": 140,
+    "y": 171,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "体育场": {
+    "width": 28,
+    "height": 28,
+    "x": 168,
+    "y": 171,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "停车厂": {
+    "width": 28,
+    "height": 28,
+    "x": 196,
+    "y": 171,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "通讯__2_": {
+    "width": 28,
+    "height": 28,
+    "x": 224,
+    "y": 0,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "通讯": {
+    "width": 28,
+    "height": 28,
+    "x": 224,
+    "y": 28,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "图书馆": {
+    "width": 28,
+    "height": 28,
+    "x": 224,
+    "y": 56,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "学校": {
+    "width": 28,
+    "height": 29,
+    "x": 28,
+    "y": 30,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "维修": {
+    "width": 28,
+    "height": 28,
+    "x": 224,
+    "y": 84,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "卫生所": {
+    "width": 28,
+    "height": 28,
+    "x": 224,
+    "y": 112,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "文化场所": {
+    "width": 28,
+    "height": 28,
+    "x": 224,
+    "y": 140,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "物流": {
+    "width": 28,
+    "height": 28,
+    "x": 224,
+    "y": 168,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "消防": {
+    "width": 28,
+    "height": 28,
+    "x": 0,
+    "y": 199,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "写字楼": {
+    "width": 28,
+    "height": 28,
+    "x": 28,
+    "y": 199,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "兴业银行": {
+    "width": 28,
+    "height": 28,
+    "x": 56,
+    "y": 199,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "休闲娱乐": {
+    "width": 28,
+    "height": 29,
+    "x": 56,
+    "y": 30,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "药店": {
+    "width": 28,
+    "height": 28,
+    "x": 84,
+    "y": 199,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "医院": {
+    "width": 28,
+    "height": 28,
+    "x": 112,
+    "y": 199,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "银行": {
+    "width": 28,
+    "height": 28,
+    "x": 140,
+    "y": 199,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "邮政储蓄银行": {
+    "width": 28,
+    "height": 28,
+    "x": 168,
+    "y": 199,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "游乐园": {
+    "width": 28,
+    "height": 28,
+    "x": 196,
+    "y": 199,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "闸坝": {
+    "width": 28,
+    "height": 28,
+    "x": 224,
+    "y": 199,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "招商银行": {
+    "width": 28,
+    "height": 28,
+    "x": 252,
+    "y": 0,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "政府机构": {
+    "width": 28,
+    "height": 28,
+    "x": 252,
+    "y": 28,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "政府机关": {
+    "width": 28,
+    "height": 28,
+    "x": 252,
+    "y": 56,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "中国银行": {
+    "width": 28,
+    "height": 28,
+    "x": 252,
+    "y": 84,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "中介": {
+    "width": 28,
+    "height": 28,
+    "x": 252,
+    "y": 112,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "中信银行": {
+    "width": 28,
+    "height": 28,
+    "x": 252,
+    "y": 140,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "住宅区": {
+    "width": 28,
+    "height": 28,
+    "x": 252,
+    "y": 168,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "宗教": {
+    "width": 28,
+    "height": 28,
+    "x": 252,
+    "y": 196,
+    "pixelRatio": 1,
+    "visible": true
+  },
+  "ATM": {
+    "width": 28,
+    "height": 29,
+    "x": 84,
+    "y": 0,
+    "pixelRatio": 1,
+    "visible": true
+  }
+}

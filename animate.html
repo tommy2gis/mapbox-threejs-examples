@@ -26,20 +26,21 @@
 
 
 
-        var map = window.map = new mapboxgl.Map({
+        var map1 = window.map1 = new mapboxgl.Map({
             container: 'map',
             zoom: 10,
             center: [120.57022, 32.3858585],
             style: style,
+           // crs:'EPSG:4490',
             hash: true
         });
 
         var origin = [120.57022, 32.3858585, 0];
 
-        map.on('load', function () {
+        map1.on('load', function () {
         
 
-            map.addLayer({
+            map1.addLayer({
                 id: 'custom_layer',
                 type: 'custom',
                 onAdd: function (map, mbxContext) {
@@ -49,12 +50,11 @@
                 render: function (gl, matrix) {
                     threebox.update();
                 }
-            },'3d-buildings');//添加到建筑物图层之后
+            },'建筑物');//添加到建筑物图层之后
         });
 
         function onAdd(map, mbxContext) {
-            window.threebox = new Threebox(map, mbxContext);//初始化
-            threebox.setupDefaultLights();//设置系统光
+            window.threebox = new Threebox(map, mbxContext, {defaultLights: true});//初始化
 
             var radius = 0.4;
             var sphereGeom = new THREE.SphereGeometry(radius, 40, 40, 0, Math.PI, 0, Math.PI);
@@ -77,8 +77,21 @@
             cube.scale.multiplyScalar(1.07);
             cube1 = new THREE.Mesh(sphereGeom, redMaterial);
             cube1.position.set(0, 0, 4);
-            threebox.addAtCoordinate(cube1.clone(), origin);
-            threebox.addAtCoordinate(cube.clone(), origin);//添加对象
+
+            cube3d = threebox.Object3D({ obj: cube.clone(), adjustment: { x: -0.5, y: -0.5, z: 0.5 }})
+                .setCoords(origin)
+
+            threebox.add(cube3d)
+
+            cube3d1 = threebox.Object3D({ obj: cube1.clone(), adjustment: { x: -0.5, y: -0.5, z: 0.5 }})
+                .setCoords(origin)
+
+            threebox.add(cube3d1)
+
+            // threebox.addAtCoordinate(cube1.clone(), origin);
+            // threebox.addAtCoordinate(cube.clone(), origin);//添加对象
+
+
             var startTime = Date.now();
 
             function animate() {
@@ -105,7 +118,7 @@
                 cube.geometry.elementsNeedUpdate = true;
                 requestAnimationFrame(animate);
             }
-            animate()
+          // animate()
            
         }
 

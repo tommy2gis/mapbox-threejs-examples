@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>示例</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <link rel="stylesheet" href="mapbox-gl.css" />
+    <style>
+      html,
+      body,
+      #map {
+        margin: 0;
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+
+    <script src="mapbox-gl-dev.js"></script>
+    <script src="MAP_STYLE.dark.js"></script>
+    <script src="threebox.js"></script>
+    <script>
+      var map = (window.map = new mapboxgl.Map({
+        container: "map",
+        zoom: 10,
+        center: [120.57022, 32.3858585],
+        style: style,
+        hash: true,
+      }));
+
+      var origin = [120.57022, 32.3858585, 0];
+
+      //generate a spiral line geometry (not essential for understanding this demo)
+
+      map.on("style.load", function () {
+        map.addLayer({
+          id: "custom_layer",
+          type: "custom",
+          renderingMode: "3d",
+          onAdd: function (map, mbxContext) {
+            window.tb = new Threebox(map, mbxContext, { defaultLights: true });
+
+            var spotLight = new THREE.SpotLight('white');
+            spotLight.intensity = 100;
+            spotLight.angle = 0.10;
+            // spotLight.penumbra = 0.05;
+            // spotLight.decay = 2;
+            spotLight.distance = 20;
+
+            const size = 0.1;
+            const cubeGeometry = new THREE.CubeGeometry(size, size, size);
+            const cubeMaterial = new THREE.MeshLambertMaterial({
+              color: "yellow",
+            });
+            const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+            const v1=map.project(origin);
+            cube.position.x=v1.x;
+            cube.position.y=v1.y;
+            tb.scene.add(cube);
+           console.log(v1);
+            spotLight.target = cube;
+            tb.add(spotLight);
+
+
+            // spotLight3ds = tb
+            //   .Object3D({ obj: cube, adjustment: { x: 0, y: 0, z: 0.5 } })
+            //   .setCoords(origin);
+            // tb.add(spotLight3ds);
+
+            
+            // tb.add(
+            //   tb
+            //     .Object3D({
+            //       obj: spotLight,
+            //       adjustment: { x: 0, y: 0, z: 0.5 },
+            //     })
+            //     .setCoords(origin)
+            // );
+
+            // var spotLightHelper = new THREE.SpotLightHelper(spotLight);
+            // tb.add(
+            //   tb
+            //     .Object3D({
+            //       obj: spotLightHelper,
+            //       adjustment: { x: 0, y: 0, z: 0.5 },
+            //     })
+            //     .setCoords(origin)
+            // );
+
+          },
+
+          render: function (gl, matrix) {
+            tb.update();
+          },
+        });
+      });
+    </script>
+  </body>
+</html>

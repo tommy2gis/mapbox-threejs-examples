@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>示例</title>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel='stylesheet' href='mapbox-gl.css' />
+    <style>
+        html,
+        body,
+        #map {
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='map'></div>
+
+    <script src='mapbox-gl-dev.js'></script>
+    <script src='MAP_STYLE.dark.js'></script>
+    <script src='threebox.js'></script>
+    <script>
+
+
+
+        var map1 = window.map1 = new mapboxgl.Map({
+            container: 'map',
+            zoom: 10,
+            center: [120.57022, 32.3858585],
+            style: style,
+           // crs:'EPSG:4490',
+            hash: true
+        });
+
+        var origin = [120.57022, 32.3858585, 0];
+
+        map1.on('load', function () {
+        
+
+            map1.addLayer({
+                id: 'custom_layer',
+                type: 'custom',
+                onAdd: function (map, mbxContext) {
+                    onAdd(map, mbxContext)
+                },
+
+                render: function (gl, matrix) {
+                    threebox.update();
+                }
+            },'建筑物');//添加到建筑物图层之后
+        });
+
+        function onAdd(map, mbxContext) {
+            tb = new Threebox(
+						map, 
+						mbxContext,
+						{defaultLights: true}
+					);
+
+					for (line of lines) {
+						var lineOptions = {
+							geometry: line,
+							color: (line[1][1]/180) * 0xffffff, // color based on latitude of endpoint
+							width: Math.random() + 1 // random width between 1 and 2
+						}
+
+						lineMesh = tb.line(lineOptions);
+
+						tb.add(lineMesh)
+					}
+        }
+
+    </script>
+</body>
+
+</html>

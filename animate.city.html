@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>示例</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <link rel="stylesheet" href="mapbox-gl.css" />
+    <style>
+      html,
+      body,
+      #map {
+        margin: 0;
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+
+    <script src="mapbox-gl-dev.js"></script>
+    <script src="MAP_STYLE.kt.js"></script>
+    <script src="threebox.js"></script>
+    <script src="threejs/OBJLoader.js"></script>
+    <script type="text/javascript" src="threejs/EffectComposer.js"></script>
+    <script type="text/javascript" src="threejs/RenderPass.js"></script>
+    <script type="text/javascript" src="threejs/ShaderPass.js"></script>
+    <script type="text/javascript" src="threejs/CopyShader.js"></script>
+    <script type="text/javascript" src="threejs/OutlinePass.js"></script>
+    <script src='building.js'></script>
+    <script src='buildingdata.js'></script>
+    <script>
+      var selectedObjects=[];
+      mapboxgl.accessToken =
+        "pk.eyJ1Ijoic2hpdGFvMTk4OCIsImEiOiJjaWc3eDJ2eHowMjA5dGpsdzZlcG5uNWQ5In0.nQQjb4DrqnZtY68rOQIjJA";
+      var map1 = (window.map1 = new mapboxgl.Map({
+        container: "map",
+        zoom: 15,
+        center: [120.57022, 32.3858585],
+        style: style,
+        // crs:'EPSG:4490',
+        hash: true,
+      }));
+      var origin = [120.576357, 32.387937, 10];
+
+      map1.on("load", function () {
+        map1.addLayer(
+          {
+            id: "custom_layer",
+            type: "custom",
+            onAdd: function (map, mbxContext) {
+              onAdd(map, mbxContext);
+            },
+
+            render: function (gl, matrix) {
+              threebox.update();
+            },
+          },
+          "building"
+        ); //添加到建筑物图层之后
+      });
+
+      function init(scene){
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 3000);
+        var renderer = new THREE.WebGLRenderer({alpha: true});
+        camera.position.set(-10, 10, 30);
+        camera.lookAt(scene.position);
+        renderer.setClearColor(0x222222,.0);
+        renderer.shadowMap.enabled = true;
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        window.compose = new THREE.EffectComposer(renderer);
+        var renderPass = new THREE.RenderPass(scene, camera);
+       
+        var outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth,window.innerHeight),scene,camera);
+        outlinePass.renderToScreen = true;
+        outlinePass.selectedObjects = selectedObjects;
+
+        compose.addPass(renderPass);
+        compose.addPass(outlinePass);
+
+        var params = {
+            edgeStrength: 3.0,
+            edgeGlow: 1,
+            edgeThickness: 1.0,
+            pulsePeriod: 0,
+            usePatternTexture: false
+        };
+        outlinePass.edgeStrength = params.edgeStrength;
+        outlinePass.edgeGlow = params.edgeGlow;
+        outlinePass.visibleEdgeColor.set(0xffffff);
+        outlinePass.hiddenEdgeColor.set(0xff00ff);
+      }
+
+      function createtrees(threebox, points) {
+        var textureTree = new THREE.TextureLoader().load(
+          "models/pngs/tree.png"
+        );
+        var spriteMaterial = new THREE.SpriteMaterial({
+          map: textureTree,
+        });
+        points.forEach((point) => {
+          var sprite = new THREE.Sprite(spriteMaterial);
+          sprite.scale.set(0.3, 0.3, 0);
+          var Sprite3d = threebox
+            .Object3D({ obj: sprite, adjustment: { x: 0, y: 0, z: 0.5 } })
+            .setCoords(point);
+          threebox.add(Sprite3d);
+        });
+      }
+
+      function getRingeGeometry(width = 7, height = 7) {
+        return new THREE.PlaneGeometry(width, height);
+      }
+
+      function createModels(threebox, points) {
+        var options = {
+          type: "mtl",
+          obj: "粮仓模型/002.obj",
+          scale: 1,
+          units: "meters",
+          material: new THREE.MeshBasicMaterial({
+            map: new THREE.TextureLoader().load("粮仓模型/002.png"),
+            side: THREE.FrontSide,
+            transparent: true,
+            wireframe : true,
+          }),
+          rotation: { x: 90, y: 180, z: 180 },
+        };
+        points.forEach(point => {
+        threebox.loadObj(options, function (model) {
+          const truck = model.setCoords(point);
+             threebox.add(truck);
+         
+             
+          });
+        
+        });
+      }
+
+      function createModels2(threebox, points) {
+        var options = {
+          type: "mtl",
+          obj: "粮仓模型/gong001.obj",
+          scale: 1,
+          units: "meters",
+          material: new THREE.MeshBasicMaterial({
+            map: new THREE.TextureLoader().load("粮仓模型/d001.png"),
+            side: THREE.FrontSide,
+            transparent: true,
+            clipIntersection: false,
+          }),
+          rotation: { x: 90, y: 180, z: 180 },
+        };
+        points.forEach(point => {
+        threebox.loadObj(options, function (model) {
+          const truck = model.setCoords(point);
+             threebox.add(truck);
+         
+             
+          });
+        
+        });
+      }
+
+      var PlaneArr = [
+        new THREE.Plane(new THREE.Vector3(-1, 0, 0), 1),
+        new THREE.Plane(new THREE.Vector3(0, 0, -1), 0),
+      ];
+
+      function createModels3(threebox, points) {
+       
+       
+          
+        var options = {
+          type: "mtl",
+          obj: "粮仓模型/003.obj",
+          scale: 1.5,
+          units: "meters",
+          material: new THREE.MeshBasicMaterial({
+            map: new THREE.TextureLoader().load("粮仓模型/003.png"),
+            side: THREE.FrontSide,
+            transparent: true,
+            clipIntersection: true,
+          }),
+          rotation: { x: 90, y: 295, z: 0 },
+        };
+        points.forEach(point => {
+
+          // var geometry2 = new THREE.BoxGeometry(
+          //     2,
+          //     3,
+          //     4,
+          //     2
+          //   );
+          //   var material2 = new THREE.MeshLambertMaterial({
+          //     color: 0xe99147,
+          //   });
+          //   var mesh2 = new THREE.Mesh(geometry2, material2);
+          //   var Sprite3d = threebox
+          //   .Object3D({ obj: mesh2, adjustment: { x: 0, y: 0, z: 0.5 } })
+          //   .setCoords(point);
+          // threebox.add(Sprite3d);
+
+
+        threebox.loadObj(options, function (model) {
+          selectedObjects.push(model.children[0].children[1]);
+          const truck = model.setCoords(point);
+             threebox.add(truck);
+         
+            
+          });
+        
+        });
+      }
+
+      function createground(threebox, point) {
+        var texture = new THREE.TextureLoader().load("models/pngs/floor3.png");
+        var material = new THREE.MeshLambertMaterial({
+          map: texture,
+          side: THREE.FrontSide,
+          transparent: true,
+        });
+
+        var ringeGeom = getRingeGeometry();
+
+        cube = new THREE.Mesh(ringeGeom, material);
+        cube3d = threebox
+          .Object3D({ obj: cube, adjustment: { x: 0, y: 0, z: 0.1 } })
+          .setCoords(point);
+
+        threebox.add(cube3d);
+      }
+
+      function onAdd(map, mbxContext) {
+        window.threebox = new Threebox(map, mbxContext, {
+          defaultLights: true,
+        }); //初始化
+
+        var building = new Building(map);
+            building.add(data);
+       
+        createModels3(threebox,[
+        [
+            120.57387828826904,
+            32.381895895821735
+          ],
+          [
+            120.57489216327666,
+            32.3822809650579
+          ],
+          [
+            120.57572364807129,
+            32.38258901926516
+          ],
+          [
+            120.57672679424286,
+            32.3829242535325
+          ],
+          [
+            120.57646393775939,
+            32.38338633115928
+          ],
+          [
+            120.57546615600587,
+            32.38309187019969
+          ]
+        ])
+        createModels2(threebox,[
+        [
+            120.5738353729248,
+            32.38258448906385
+          ],
+          [
+            120.57434499263763,
+            32.382765696939465
+          ],
+          [
+            120.57484924793242,
+            32.382937844084665
+          ],
+          [
+            120.5746614933014,
+            32.38330025805496
+          ],
+          [
+            120.57415723800659,
+            32.383150762468375
+          ],
+          [
+            120.57362079620361,
+            32.382937844084665
+          ]
+        ]);
+        createModels(threebox, [
+          [
+            120.57349741458893,
+            32.38339539148126
+          ],
+          [
+            120.57409286499022,
+            32.38364001983174
+          ],
+          [
+            120.57467758655548,
+            32.3838846475198
+          ],
+          [
+            120.5753642320633,
+            32.38394353927171
+          ],
+          [
+            120.57607233524323,
+            32.38396165980303
+          ]
+        ]);
+        var treepoints = [
+          [120.5737656354904, 32.381284311896856],
+          [120.57371735572815, 32.38147458289491],
+          [120.57368516921996, 32.381660323244574],
+          [120.5736529827118, 32.381864184164435],
+          [120.57361006736754, 32.38206804462428],
+          [120.5735671520233, 32.38225831397181],
+          [120.57351887226103, 32.382448582918606],
+          [120.57344913482665, 32.382661502455385],
+          [120.57335793972014, 32.38285177055305],
+          [120.57325601577759, 32.38306468913964],
+          [120.57315945625304, 32.3832458960521],
+          [120.57307362556456, 32.38340445180237],
+          [120.57297706604004, 32.38355394696914],
+          [120.57286977767944, 32.38370797203377],
+          [120.57313799858093, 32.38387105711008],
+          [120.57341694831848, 32.38399337072409],
+          [120.57367980480193, 32.38412021429705],
+          [120.57400703430174, 32.38425158780987],
+          [120.57428061962128, 32.38433312989414],
+          [120.57452201843262, 32.38441014179504],
+          [120.57481706142424, 32.38444185255867],
+          [120.5751121044159, 32.38444185255867],
+          [120.57542860507965, 32.38443732245027],
+          [120.57576656341553, 32.38443732245027],
+          [120.57607769966125, 32.38443732245027],
+          [120.57638883590697, 32.3844509127748],
+          [120.57672679424286, 32.38444638266685],
+          [120.57689845561981, 32.384228937217834],
+          [120.57703256607054, 32.383979780330726],
+          [120.57721495628357, 32.38369438159745],
+          [120.57737588882446, 32.38348599465126],
+          [120.57753682136536, 32.383209654698696],
+          [120.57773530483246, 32.38295143463479],
+          [120.5777996778488, 32.38283817998794],
+          [120.57748854160309, 32.38275663655433],
+        ];
+        createtrees(threebox, treepoints);
+        init(threebox.scene)
+       // composer.render();
+        // const path = {
+        //   type: "LineString",
+        //   coordinates: [
+        //     [120.55478096008301, 32.39112351517078],
+        //     [120.55628299713133, 32.391630848344825],
+        //     [120.55780649185179, 32.391993227438554],
+        //     [120.55887937545776, 32.39235560507824],
+        //     [120.56160449981688, 32.39309847469382],
+        //     [120.56220531463622, 32.39293540627728],
+        //     [120.56248426437377, 32.39230124852499],
+        //     [120.56289196014403, 32.39065241752877],
+        //     [120.5635356903076, 32.390670536714275],
+        //     [120.56647539138793, 32.391594610355455],
+        //     [120.56690454483032, 32.391087276977856],
+        //     [120.56722640991211, 32.39052558312838],
+        //     [120.5675482749939, 32.39007260167296],
+        //   ],
+        // };
+        // var options = {
+        //   type: "mtl",
+        //   obj: "models/Truck.obj",
+        //   mtl: "models/Truck.mtl",
+        //   scale: 20,
+        //   units: "meters",
+        //   rotation: { x: 90, y: 180, z: 0 },
+        // };
+
+        // threebox.loadObj(options, function (model) {
+        //   const truck = model.setCoords(path.coordinates[0]);
+        //   threebox.add(truck);
+        //   var options = {
+        //     path: path.coordinates,
+        //     duration: 10000,
+        //   };
+
+        //   truck.followPath(options, function () {
+        //     // tb.remove(line);
+        //   });
+        // });
+        var clock = new THREE.Clock();
+        render();
+        function render() {
+        var delta = clock.getDelta();
+        requestAnimationFrame(render);
+        //renderer.render(scene, camera);
+        compose.render(delta);
+    }   
+      }
+    </script>
+  </body>
+</html>

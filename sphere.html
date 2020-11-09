@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>示例</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <link rel="stylesheet" href="mapbox-gl.css" />
+    <style>
+      html,
+      body,
+      #map {
+        margin: 0;
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+
+    <script src="mapbox-gl-dev.js"></script>
+    <script src="MAP_STYLE.darkblue.js"></script>
+    <script src="threebox.js"></script>
+    <script>
+      var map = (window.map = new mapboxgl.Map({
+        container: "map",
+        zoom: 10,
+        center: [120.57022, 32.3858585],
+        style: style,
+        hash: true,
+      }));
+
+      var origin = [120.57022, 32.3858585, 0];
+
+      let tx=new THREE.TextureLoader().load("wall1.png");
+        tx.wrapS = THREE.RepeatWrapping;
+        tx.wrapT=THREE.RepeatWrapping;
+
+      var uniforms = {
+        scale:   { value: -1.0},
+        bias:   { value: 1.0},
+        power:   { value: 3.3 },
+        glowColor: {  value: new THREE.Color(0x00ffff) },
+        textureMap: {
+            value:tx
+        },
+        repeat:{
+            value:new THREE.Vector2(30.0,15.0)
+        },
+        time:{
+            value:0.0
+        }
+      };
+
+      map.on("style.load", function () {
+        map.addLayer(
+          {
+            id: "custom_layer",
+            type: "custom",
+            renderingMode: "3d",
+            onAdd: function (map, mbxContext) {
+              window.tb = new Threebox(map, mbxContext, {
+                defaultLights: true,
+              });
+
+              function getShaderStr(params) {
+                let shader = { vs: "", fs: "" };
+
+                shader.vs =`  varying vec3 vNormal;
+                varying vec3 vPositionNormal;
+                varying vec2 vUv;
+                void main() 
+                {
+                    vUv = uv;
+                    vNormal = normalize( normalMatrix * normal ); // 转换到视图空间
+                    vPositionNormal = normalize(( modelViewMatrix * vec4(position, 1.0) ).xyz);
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+                }`;
+
+                shader.fs =`uniform vec3 glowColor;
+                uniform float bias;
+                uniform float power;
+                uniform float scale;
+                varying vec3 vNormal;
+                varying vec3 vPositionNormal;
+                uniform sampler2D textureMap;
+                uniform vec2 repeat;
+                varying vec2 vUv;
+                uniform float time;
+                void main() 
+                {
+                    float a = pow( bias + scale * abs(dot(vNormal, vPositionNormal)), power );
+                    //*(vec2(1.0,time))
+                    vec4 mapColor=texture2D( textureMap, vUv*repeat);
+                    gl_FragColor = vec4( glowColor*mapColor.rgb, a );
+                }`;
+                return shader;
+              }
+
+              function getMaterial() {
+                let shader = getShaderStr();
+                let material = new THREE.ShaderMaterial({
+                  uniforms: uniforms,
+                  vertexShader: shader.vs,
+                  fragmentShader: shader.fs,
+                  side: THREE.DoubleSide,
+                  transparent: true,
+                  depthWrite: false,
+                });
+                return material;
+              }
+              function getGeometry(geometryScale) {
+                let geo = new THREE.SphereGeometry( 40, 100, 100 ,0,Math.PI*2,0,Math.PI/2);
+              return geo;
+              }
+
+    
+
+              const geometry = getGeometry();
+              const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+              const mesh = new THREE.Mesh(geometry, getMaterial());
+              mesh.rotation.x = Math.PI / 2;
+              spotLight3ds = tb
+                .Object3D({ obj: mesh, adjustment: { x: 0, y: 0, z: 0.001 } })
+                .setCoords(origin);
+              tb.add(spotLight3ds);
+            },
+
+            render: function (gl, matrix) {
+              tb.update();
+            },
+          },
+          "兴趣点-level-towm"
+        );
+      });
+    </script>
+  </body>
+</html>

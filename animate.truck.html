@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>示例</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <style>
+      html,
+      body,
+      #map {
+        margin: 0;
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.js"></script>
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v1.11.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <script src="MAP_STYLE.darkblue.js"></script>
+    <script src="threebox.js"></script>
+    <script>
+      var map1 = (window.map1 = new mapboxgl.Map({
+        container: "map",
+        zoom: 10,
+        center: [120.57022, 32.3858585],
+        style: style,
+        // crs:'EPSG:4490',
+        hash: true,
+      }));
+
+      var origin = [120.57022, 32.3858585, 0];
+
+      map1.on("style.load", function () {
+        map1.addLayer(
+          {
+            id: "custom_layer",
+            type: "custom",
+            onAdd: function (map, mbxContext) {
+              onAdd(map, mbxContext);
+            },
+
+            render: function (gl, matrix) {
+              tb.update();
+            },
+          },
+          "兴趣点-level-towm"
+        ); //添加到建筑物图层之后
+      });
+
+      function onAdd(map, mbxContext) {
+        // Threebox.prototype.defaultLights = function() {
+        //   this.scene.add(new THREE.AmbientLight(0xccccff, 2));
+        //   let sunlight = new THREE.DirectionalLight(0xffffff, 1);
+        //   sunlight.position.set(0, 8000, 10000);
+        //   sunlight.matrixWorldNeedsUpdate = true;
+        //   this.world.add(sunlight);
+        // };
+        window.tb = new Threebox(map, mbxContext, {
+          defaultLights: true,
+          enableSelectingObjects: true,
+        }); //初始化
+        const path = {
+          type: "LineString",
+          coordinates: [
+            [120.55478096008301, 32.39112351517078],
+            [120.55628299713133, 32.391630848344825],
+            [120.55780649185179, 32.391993227438554],
+            [120.55887937545776, 32.39235560507824],
+            [120.56160449981688, 32.39309847469382],
+            [120.56220531463622, 32.39293540627728],
+            [120.56248426437377, 32.39230124852499],
+            [120.56289196014403, 32.39065241752877],
+            [120.5635356903076, 32.390670536714275],
+            [120.56647539138793, 32.391594610355455],
+            [120.56690454483032, 32.391087276977856],
+            [120.56722640991211, 32.39052558312838],
+            [120.5675482749939, 32.39007260167296],
+          ],
+        };
+        // var options1 = {
+        //   type: "mtl",
+        //   obj: "models/wk.obj",
+        //   mtl:"models/wk.mtl",
+        //   // material: new THREE.MeshBasicMaterial({
+        //   //   map: new THREE.TextureLoader().load("building_top.png"),
+        //   //   side: THREE.DoubleSide,
+        //   //   transparent: false,
+        //   //   wireframe : false,
+        //   // }),
+        //   scale: 1,
+        //   units: "meters",
+        //   rotation: { x: 90, y: 180, z: 0 },
+        // };
+
+        // threebox.loadObj(options1, function (model) {
+        //   const truck = model.setCoords(path.coordinates[0]);
+        //   threebox.add(truck);
+        //   // var options = {
+        //   //   path: path.coordinates,
+        //   //   duration: 10000,
+        //   // };
+
+        //   // truck.followPath(options, function () {
+        //   //   // tb.remove(line);
+        //   // });
+        // });
+
+        var options = {
+          type: "dae",
+          obj: "models/building.DAE",
+          material: new THREE.MeshBasicMaterial({
+            map: new THREE.TextureLoader().load("building_top.png"),
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 1,
+            wireframe: false,
+          }),
+          scale: 1,
+          anchor: "center",
+          units: "meters",
+          rotation: { x: 90, y: 180, z: 0 },
+        };
+
+        var options2 = {
+          type: "dae",
+          obj: "models/f5.DAE",
+          material: new THREE.MeshPhongMaterial({
+            color: 0x63a3,
+            map: new THREE.TextureLoader().load("building2.png"),
+            specular: 0x20202,
+            shininess: 20,
+          }),
+          scale: 1,
+          units: "meters",
+          anchor: "center",
+          rotation: { x: 90, y: 180, z: 0 },
+        };
+
+        var floor;
+
+        tb.loadObj(options2, function (model) {
+          floor = model.setCoords([120.5664, 32.3854]);
+        });
+
+        tb.loadObj(options, function (model) {
+          const truck = model.setCoords([120.56642, 32.38535]);
+          truck.addEventListener("SelectedChange", onSelectedChange, false);
+          tb.add(truck);
+        });
+
+        function onSelectedChange(e) {
+          let selected = e.detail.selected;
+          if (selected) {
+            if (floor) {
+              tb.add(floor);
+            }
+            e.detail.children.forEach((ele) => {
+              ele.children[0].material.opacity = 0.1;
+            });
+          } else {
+            if (floor) {
+              tb.remove(floor,false);
+            }
+            e.detail.children.forEach((ele) => {
+              ele.children[0].material.opacity = 1;
+            });
+          }
+
+          //console.log("onSelectedChange: " + selected);
+        }
+
+        //  options = {
+        //   type: "dae",
+        //   obj: "models/f5.DAE",
+        //   material: new THREE.MeshPhongMaterial({
+        //       color:0x63a3,
+        //       map: new THREE.TextureLoader().load("building2.png"),
+        //       specular:0x20202,
+        //       shininess:20
+        //   }),
+        //   scale: 1,
+        //   units: "meters",
+        //   anchor: 'center',
+        //   rotation: { x: 90, y: 180, z: 0 },
+        // };
+
+        // tb.loadObj(options, function (model) {
+        //   const truck = model.setCoords([120.56640,32.38540]);
+        //   truck.addEventListener('SelectedChange', onSelectedChange, false);
+        //   tb.add(truck);
+        // });
+      }
+    </script>
+  </body>
+</html>

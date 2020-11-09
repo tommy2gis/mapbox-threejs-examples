@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>示例</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <link rel="stylesheet" href="mapbox-gl.css" />
+    <style>
+      html,
+      body,
+      #map {
+        margin: 0;
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+    <script type="x-shader/x-vertex" id="vertexshader">
+      attribute float size;
+      varying vec3 vColor;
+      void main() {
+          vColor = color;
+          vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+          gl_PointSize = size * ( 300.0 / -mvPosition.z );
+          gl_Position = projectionMatrix * mvPosition;
+      }
+    </script>
+    <script type="x-shader/x-fragment" id="fragmentshader">
+      uniform sampler2D pointTexture;
+      varying vec3 vColor;
+      void main() {
+          gl_FragColor = vec4( vColor, 1.0 );
+          gl_FragColor = gl_FragColor * texture2D( pointTexture, gl_PointCoord );
+      }
+    </script>
+    <script src="mapbox-gl-dev.js"></script>
+    <script src="MAP_STYLE.dark.js"></script>
+    <script src="threebox.js"></script>
+    <script>
+      var map = (window.map = new mapboxgl.Map({
+        container: "map",
+        zoom: 10,
+        center: [120.57022, 32.3858585],
+        style: style,
+        hash: true,
+      }));
+
+      var origin = [120.57022, 32.3858585, 0];
+
+      map.on("style.load", function () {
+        map.addLayer({
+          id: "custom_layer",
+          type: "custom",
+          renderingMode: "3d",
+          onAdd: function (map, mbxContext) {
+            window.tb = new Threebox(map, mbxContext, { defaultLights: true });
+            const particles=100;
+            const radius=20;
+            const positions = [];
+				const colors = [];
+				const sizes = [];
+				const color = new THREE.Color();
+				for ( let i = 0; i < particles; i ++ ) {
+					positions.push( ( Math.random() * 2 - 1 ) * radius );
+					positions.push( ( Math.random() * 2 - 1 ) * radius );
+					positions.push( ( Math.random() * 2 - 1 ) * radius );
+					color.setHSL( i / particles, 1.0, 0.5 );
+					colors.push( color.r, color.g, color.b );
+					sizes.push( 20 );
+				}
+
+            const bufferGeometry = new THREE.BufferGeometry();
+            bufferGeometry.setAttribute( 'position', new THREE.Float32BufferAttribute( positions, 3 ) );
+            bufferGeometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
+            bufferGeometry.setAttribute( 'size', new THREE.Float32BufferAttribute( sizes, 1 ).setUsage( THREE.DynamicDrawUsage ) );
+            const uniforms = {
+                texture: { value: new THREE.TextureLoader().load("spark1.png") },
+            };
+            var shaderMaterial = new THREE.ShaderMaterial({
+                uniforms: uniforms,
+                vertexShader: document.getElementById('vertexshader').textContent,
+                fragmentShader: document.getElementById('fragmentshader').textContent,
+                blending: THREE.AdditiveBlending,
+                depthTest: true,
+                depthWrite: false,
+                transparent: true,
+                vertexColors: true
+            });
+            const particleSystem = new THREE.Points(bufferGeometry, shaderMaterial);
+            tb.scene.add( particleSystem );
+            var spotLight3ds = tb.Object3D({ obj: particleSystem, adjustment: { x: 0, y: 0, z: 0.5 }})
+                .setCoords(origin)
+                tb.add(spotLight3ds)
+
+
+          },
+
+          render: function (gl, matrix) {
+            tb.update();
+          },
+        });
+      });
+    </script>
+  </body>
+</html>
