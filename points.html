@@ -59,44 +59,88 @@
           renderingMode: "3d",
           onAdd: function (map, mbxContext) {
             window.tb = new Threebox(map, mbxContext, { defaultLights: true });
-            const particles=100;
-            const radius=20;
+            const particles = 100;
+            const radius = 20;
             const positions = [];
-				const colors = [];
-				const sizes = [];
-				const color = new THREE.Color();
-				for ( let i = 0; i < particles; i ++ ) {
-					positions.push( ( Math.random() * 2 - 1 ) * radius );
-					positions.push( ( Math.random() * 2 - 1 ) * radius );
-					positions.push( ( Math.random() * 2 - 1 ) * radius );
-					color.setHSL( i / particles, 1.0, 0.5 );
-					colors.push( color.r, color.g, color.b );
-					sizes.push( 20 );
-				}
+            const colors = [];
+            const sizes = [];
+            const color = new THREE.Color();
+            for (let i = 0; i < particles; i++) {
+              positions.push((Math.random() * 2 - 1) * radius);
+              positions.push((Math.random() * 2 - 1) * radius);
+              positions.push((Math.random() * 2 - 1) * radius);
+              color.setHSL(i / particles, 1.0, 0.5);
+              colors.push(color.r, color.g, color.b);
+              sizes.push(20);
+            }
 
             const bufferGeometry = new THREE.BufferGeometry();
-            bufferGeometry.setAttribute( 'position', new THREE.Float32BufferAttribute( positions, 3 ) );
-            bufferGeometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
-            bufferGeometry.setAttribute( 'size', new THREE.Float32BufferAttribute( sizes, 1 ).setUsage( THREE.DynamicDrawUsage ) );
+            bufferGeometry.setAttribute(
+              "position",
+              new THREE.Float32BufferAttribute(positions, 3)
+            );
+            bufferGeometry.setAttribute(
+              "color",
+              new THREE.Float32BufferAttribute(colors, 3)
+            );
+            bufferGeometry.setAttribute(
+              "size",
+              new THREE.Float32BufferAttribute(sizes, 1).setUsage(
+                THREE.DynamicDrawUsage
+              )
+            );
             const uniforms = {
-                texture: { value: new THREE.TextureLoader().load("spark1.png") },
+              texture: { value: new THREE.TextureLoader().load("spark1.png") },
             };
             var shaderMaterial = new THREE.ShaderMaterial({
-                uniforms: uniforms,
-                vertexShader: document.getElementById('vertexshader').textContent,
-                fragmentShader: document.getElementById('fragmentshader').textContent,
-                blending: THREE.AdditiveBlending,
-                depthTest: true,
-                depthWrite: false,
-                transparent: true,
-                vertexColors: true
+              uniforms: uniforms,
+              vertexShader: document.getElementById("vertexshader").textContent,
+              fragmentShader: document.getElementById("fragmentshader")
+                .textContent,
+              blending: THREE.AdditiveBlending,
+              depthTest: true,
+              depthWrite: false,
+              transparent: true,
+              vertexColors: true,
             });
-            const particleSystem = new THREE.Points(bufferGeometry, shaderMaterial);
-            tb.scene.add( particleSystem );
-            var spotLight3ds = tb.Object3D({ obj: particleSystem, adjustment: { x: 0, y: 0, z: 0.5 }})
-                .setCoords(origin)
-                tb.add(spotLight3ds)
+           
 
+             var tmp = new THREE.Mesh(bufferGeometry, shaderMaterial);
+            //  tb.scene.add(tmp)
+            //  tmp.scale(0.1,0.1,0.1)
+            tb.add(
+              tb
+                .Object3D({ obj: tmp, adjustment: { x: 0, y: 0, z: 0.5 } })
+                .setCoords(origin)
+            );
+
+            // var spotLight3ds = tb
+            //   .Object3D({
+            //     obj: particleSystem,
+            //     adjustment: { x: 0, y: 0, z: 0.5 },
+            //   })
+            //   .setCoords(origin);
+            // tb.add(spotLight3ds);
+            var line=[
+              [120.56357860565184, 32.38804321686504],
+              [120.56211948394774, 32.393225305480904],
+              [120.56066036224365, 32.39895062405777],
+            ]
+            var straightProject = tb.utils.lnglatsToWorld(line);
+            var normalized = tb.utils.normalizeVertices(straightProject);
+            var flattenedArray = tb.utils.flattenVectors(normalized.vertices);
+
+            const particleSystem = new THREE.Points(
+              flattenedArray.geometry,
+              shaderMaterial
+            );
+             var spotLight3ds = tb
+              .Object3D({
+                obj: particleSystem,
+                adjustment: { x: 0, y: 0, z: 0.5 },
+              })
+              .setCoords(origin);
+            tb.add(spotLight3ds);
 
           },
 
